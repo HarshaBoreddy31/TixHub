@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TixHub - Online Ticket Booking</title>
+    <link rel="stylesheet" href="web_css.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div id="authOverlay" class="auth-overlay" style="display: none;">
+        <div class="auth-card">
+            <h2>Welcome to TixHub</h2>
+            <p>Select your role to continue</p>
+            <div class="auth-actions">
+                <button class="wide-btn" type="button" onclick="showUserLogin()">User Login / Register</button>
+                <button class="wide-btn admin-btn" type="button" onclick="showAdminLogin()">Admin Login</button>
+            </div>
+
+            <div id="userLoginBox" class="user-login-box hidden">
+                <h3>User</h3>
+                <div id="userForms">
+                    <div id="loginForm">
+                        <input id="userLoginEmail" type="email" placeholder="Email" autocomplete="off">
+                        <input id="userLoginPassword" type="password" placeholder="Password" autocomplete="off">
+                        <button class="wide-btn" type="button" onclick="userLogin()">Login</button>
+                        <p style="margin-top:8px;">Don't have an account? <a href="javascript:void(0)" onclick="showRegisterForm()">Register</a></p>
+                    </div>
+                    <div id="registerForm" class="hidden">
+                        <input id="userRegisterName" type="text" placeholder="Full name" autocomplete="off">
+                        <input id="userRegisterEmail" type="email" placeholder="Email" autocomplete="off">
+                        <input id="userRegisterPassword" type="password" placeholder="Password" autocomplete="off">
+                        <button class="wide-btn" type="button" onclick="registerUser()">Register</button>
+                        <button class="wide-btn cancel-btn" type="button" onclick="showLoginForm()">Back to Login</button>
+                    </div>
+                </div>
+                <button class="wide-btn cancel-btn" type="button" onclick="hideUserLogin()">Close</button>
+            </div>
+
+            <div id="adminLoginBox" class="admin-login-box hidden">
+                <h3>Admin Login</h3>
+                <input id="adminUsername" type="email" placeholder="Admin email" autocomplete="off">
+                <input id="adminPassword" type="password" placeholder="Password" autocomplete="off">
+                <button class="wide-btn admin-login-btn" type="button" onclick="adminLogin()">Login</button>
+                <button class="wide-btn cancel-btn" type="button" onclick="hideAdminLogin()">Back</button>
+            </div>
+        </div>
+    </div>
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="logo">
+                    <i class="fas fa-ticket-alt"></i>
+                    <span>TixHub</span>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="#home" class="nav-link">Home</a></li>
+                    <li><a href="#movies" class="nav-link">Movies</a></li>
+                    <li><a href="#events" class="nav-link">Live Events</a></li>
+                    <li><a href="#college" class="nav-link">College Fest</a></li>
+                    <li><a href="javascript:void(0);" class="nav-link" onclick="viewMyBookings()">My Bookings</a></li>
+                    <li id="adminDashboardNavItem" class="hidden"><a href="#adminDashboard" class="nav-link" style="color: #e50914; font-weight: 600;">Dashboard</a></li>
+                    <li><a href="javascript:void(0);" id="userNavLink" class="nav-link" onclick="openAuthOverlay()">Login</a></li>
+                    <li id="logoutNavItem" class="hidden" style="margin-left: 8px;">
+                        <button type="button" id="userLogoutBtn" class="nav-logout" onclick="logoutUser()" style="background: #fff; color: #222; border: 1px solid #ddd; border-radius: 999px; padding: 10px 16px; cursor: pointer; font-weight: 600;">Logout</button>
+                    </li>
+                </ul>
+                <div class="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>Book Your Next Experience</h1>
+            <p>Movies • Live Events • College Fests</p>
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Search movies, events, college fests...">
+                <select id="categoryFilter">
+                    <option value="all">All Categories</option>
+                    <option value="movie">Movies</option>
+                    <option value="live">Live Events</option>
+                    <option value="college">College Fests</option>
+                </select>
+                <button onclick="filterEvents()"><i class="fas fa-search"></i></button>
+            </div>
+        </div>
+    </section>
+
+    <section id="adminDashboard" class="admin-dashboard hidden">
+        <div class="container">
+            <div class="admin-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 25px;">
+                <div>
+                    <h2>Admin Dashboard</h2>
+                    <p>Manage your event listings from here. Add new events or delete old ones.</p>
+                </div>
+                <button class="wide-btn logout-btn" type="button" onclick="logoutAdmin()" style="width: auto; padding: 10px 22px; margin: 0; background: #dc3545; color: #fff; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                    <i class="fas fa-sign-out-alt" style="margin-right: 6px;"></i> Logout Admin
+                </button>
+            </div>
+            <div class="admin-grid">
+                <div class="admin-card">
+                    <h3>Add New Event</h3>
+                    <div class="admin-form">
+                        <input id="newEventTitle" type="text" placeholder="Event title">
+                        <select id="newEventCategory">
+                            <option value="movie">Movie</option>
+                            <option value="live">Live Event</option>
+                            <option value="college">College Fest</option>
+                        </select>
+                        <input id="newEventDate" type="text" placeholder="Date">
+                        <input id="newEventTime" type="text" placeholder="Time">
+                        <input id="newEventLocation" type="text" placeholder="Location">
+                        <input id="newEventPrice" type="number" placeholder="Price">
+                        <input id="newEventSeats" type="number" placeholder="Total seats">
+                        <button class="wide-btn admin-add-btn" type="button" onclick="addAdminEvent()">Add Event</button>
+                    </div>
+                </div>
+                <div class="admin-card">
+                    <h3>Current Events</h3>
+                    <div id="adminEventList" class="admin-event-list"></div>
+                </div>
+            </div>
+            <button class="wide-btn logout-btn" type="button" onclick="logoutAdmin()">Logout Admin</button>
+        </div>
+    </section>
+    <!-- Events Section -->
+    <section id="events" class="events">
+        <div class="container">
+            <h2 class="section-title">Discover Events</h2>
+            <div class="events-grid" id="eventsGrid">
+                <!-- Events will be populated by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking Modal -->
+    <div id="bookingModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="modalBody">
+                <!-- Dynamic content -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>TixHub</h3>
+                    <p>Your one-stop platform for movies, live events, and college fests in Chennai.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Colleges Covered</h4>
+                    <p>SRM, VIT, Sathyabama, IIT Madras, Anna University & more</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <p><i class="fas fa-phone"></i> +91 98765 43210</p>
+                    <p><i class="fas fa-envelope"></i> support@tixhub.com</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 TixHub. Web Programming Assignment - BTech 2nd Year</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
