@@ -1,6 +1,6 @@
-# 🎟️ TixHub – Full-Stack Online Event & Ticket Booking System
+# 🎟️ TixHub – Don’t Just Book Events — Host Your Own.
 
-A full-stack web application for discovering and booking tickets for movies, live concerts, and college fests with interactive real-time seat reservation, JWT role-based authentication, and an Oracle 11g database backend.
+A full-stack event marketplace **enabling independent organizers** to host and track their own events while attendees discover and reserve tickets via real-time interactive seat maps, backed by an Oracle 11g database.
 
 ---
 
