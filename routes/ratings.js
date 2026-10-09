@@ -8,7 +8,7 @@ function getAuthenticatedUser(req) {
   const token = getBearerToken(req);
   if (!token) return null;
   const user = verifyToken(token);
-  if (!user || (!user.role || user.role.toLowerCase() !== 'user')) return null;
+  if (!user || !user.role || !['user', 'creator', 'admin'].includes(user.role.toLowerCase())) return null;
   return user;
 }
 

@@ -1,0 +1,538 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TixHub - Review 1 Presentation Deck</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg: #0b0f19;
+            --card-bg: #151d30;
+            --card-border: #24304f;
+            --primary: #e50914;
+            --secondary: #6366f1;
+            --accent: #10b981;
+            --text: #f8fafc;
+            --muted: #94a3b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        .deck-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        .slide {
+            display: none;
+            width: 100%;
+            max-width: 1200px;
+            height: 650px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 40px 50px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            flex-direction: column;
+            justify-content: space-between;
+            animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.98) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .slide-header {
+            margin-bottom: 20px;
+        }
+
+        .slide-category {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+
+        .slide-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .slide-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--card-border);
+            padding: 22px;
+            border-radius: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card p, .card li {
+            color: var(--muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .card ul li {
+            margin-bottom: 8px;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .card ul li::before {
+            content: "•";
+            color: var(--primary);
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        .code-box {
+            font-family: 'JetBrains Mono', monospace;
+            background: #0d1322;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #202b42;
+            color: var(--accent);
+            font-size: 0.85rem;
+            white-space: pre-wrap;
+            line-height: 1.4;
+        }
+
+        .speaker-notes-drawer {
+            background: #0d1322;
+            border-top: 1px solid var(--card-border);
+            padding: 12px 30px;
+            font-size: 0.9rem;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .speaker-notes-drawer strong {
+            color: var(--accent);
+            white-space: nowrap;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 50px;
+            background: #080c14;
+            border-top: 1px solid #1e293b;
+        }
+
+        .btn {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            color: #fff;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .progress-bar-container {
+            flex: 1;
+            margin: 0 30px;
+            height: 6px;
+            background: #1e293b;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            width: 10%;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="deck-container">
+
+        <!-- Slide 1: Title -->
+        <div class="slide active">
+            <div class="slide-header" style="text-align: center; margin-top: 40px;">
+                <div class="slide-category">DBMS LAB PROJECT • REVIEW 1 (DESIGN REVIEW)</div>
+                <h1 style="font-size: 3.5rem; font-weight: 800; color: var(--primary); margin: 10px 0;">TIXHUB</h1>
+                <h2 style="font-size: 1.6rem; color: #fff; font-weight: 600;">Online Event & Ticket Booking Platform</h2>
+                <p style="color: var(--accent); font-weight: 600; margin-top: 10px;">Entity-Relationship Modeling & 3NF Database Design</p>
+            </div>
+            <div class="slide-body" style="justify-content: center; align-items: center;">
+                <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); padding: 25px 40px; border-radius: 14px; text-align: center; max-width: 650px;">
+                    <p style="color: var(--muted); font-size: 1rem; margin-bottom: 6px;">Course: <strong>Database Management Systems Lab</strong> (30 Marks Assessment)</p>
+                    <p style="color: var(--text); font-size: 0.95rem;">Tech Stack: <strong>Oracle 11g XE • Node.js / Express • Vanilla JS • JWT Auth</strong></p>
+                </div>
+            </div>
+            <div style="text-align: center; color: var(--muted); font-size: 0.85rem;">Use ⬅️ / ➡️ Arrow keys or buttons below to navigate</div>
+        </div>
+
+        <!-- Slide 2: Problem Definition -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-category">Problem Definition & Motivation</div>
+                <h2 class="slide-title">Limitations of Traditional Ticketing</h2>
+            </div>
+            <div class="slide-body">
+                <div class="grid-2">
+                    <div class="card">
+                        <h3><i class="fas fa-hourglass-half" style="color:var(--primary)"></i> Long Queues & Manual Delays</h3>
+                        <p>Physical ticket counters create long queues, high transaction delays, and limited booking flexibility.</p>
+                    </div>
+                    <div class="card">
+                        <h3><i class="fas fa-eye-slash" style="color:var(--secondary)"></i> No Seat Transparency</h3>
+                        <p>Customers lack real-time visibility into theatre layouts and cannot choose preferred seats interactively.</p>
+                    </div>
+                    <div class="card">
+                        <h3><i class="fas fa-bolt" style="color:var(--accent)"></i> Race Conditions & Double-Booking</h3>
+                        <p>Lack of atomic transaction management allows multiple concurrent users to book the same seat simultaneously.</p>
+                    </div>
+                    <div class="card">
+                        <h3><i class="fas fa-clipboard-list" style="color:var(--primary)"></i> Poor Feedback & History</h3>
+                        <p>No unified portal for instant cancellation, dynamic seat restoration, or aggregate review calculation.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Objectives -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-category">Project Objectives</div>
+                <h2 class="slide-title">Proposed Objectives & Key Features</h2>
+            </div>
+            <div class="slide-body">
+                <div class="grid-2">
+                    <div class="card">
+                        <h3><i class="fas fa-layer-group" style="color:var(--primary)"></i> Multi-Category Discovery</h3>
+                        <p>Seamless browsing and searching across Movies, Live Concerts, and College Fests.</p>
+                    </div>
+                    <div class="card">
+                        <h3><i class="fas fa-chair" style="color:var(--accent)"></i> Interactive Cinema Seat Map</h3>
+                        <p>Real-time visual seat matrix with dynamic multi-seat pricing calculation.</p>
+                    </div>
+                    <div class="card">
+                        <h3><i class="fas fa-shield-halved" style="color:var(--secondary)"></i> ACID Concurrency Control</h3>
+                        <p>Oracle SQL transactions ensuring absolute seat isolation and zero double-booking.</p>
+                    </div>
+                    <div class="card">
+                        <h3><i class="fas fa-rotate-left" style="color:var(--primary)"></i> Instant Cancel & Ratings</h3>
+                        <p>One-click cancellation with immediate seat deallocation and dynamic 1-5 star reviews.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Requirement Analysis -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-category">Requirement Analysis</div>
+                <h2 class="slide-title">Functional vs Non-Functional Requirements</h2>
+            </div>
+            <div class="slide-body">
+                <div class="grid-2">
+                    <div class="card" style="border-color: var(--primary);">
+                        <h3 style="color:var(--primary)"><i class="fas fa-cogs"></i> Functional Requirements</h3>
+                        <ul>
+                            <li>User Registration & Login with bcrypt hashing</li>
+                            <li>Admin event management (CRUD operations)</li>
+                            <li>Live seat map selection & atomic checkout</li>
+                            <li>Real-time booking cancellation & history</li>
+                            <li>1–5 star event rating submission & display</li>
+                        </ul>
+                    </div>
+                    <div class="card" style="border-color: var(--accent);">
+                        <h3 style="color:var(--accent)"><i class="fas fa-shield-alt"></i> Non-Functional Requirements</h3>
+                        <ul>
+                            <li><strong>Data Integrity:</strong> 3NF Normalization, PKs, FKs, Check constraints</li>
+                            <li><strong>Security:</strong> JWT tokens & role-based route middleware</li>
+                            <li><strong>Performance:</strong> Sub-second queries via connection pooling</li>
+                            <li><strong>Zero Reload:</strong> Optimistic DOM updates for fast UX</li>
+                            <li><strong>Concurrency:</strong> Transactional safety against race conditions</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: System Architecture -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-category">System Architecture</div>
+                <h2 class="slide-title">3-Tier Full-Stack Architecture</h2>
+            </div>
+            <div class="slide-body">
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <div class="card" style="border-left: 4px solid var(--secondary);">
+                        <h3><i class="fas fa-desktop" style="color:var(--secondary)"></i> Presentation Tier (Frontend)</h3>
+                        <p>HTML5, CSS3 Grid/Flexbox, Vanilla ES6+ JavaScript. Features visual seat map & optimistic UI rendering.</p>
+                    </div>
+                    <div class="card" style="border-left: 4px solid var(--primary);">
+                        <h3><i class="fas fa-server" style="color:var(--primary)"></i> Application Tier (REST Backend)</h3>
+                        <p>Node.js & Express.js. Implements JWT authentication, bcrypt encryption, and structured API routing.</p>
+                    </div>
+                    <div class="card" style="border-left: 4px solid var(--accent);">
+                        <h3><i class="fas fa-database" style="color:var(--accent)"></i> Database Tier (Oracle 11g XE)</h3>
+                        <p>Oracle Database 11g XE. Thick Client Connection Pooling, 5 Relational Tables, PL/SQL Triggers & Sequences.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Database Entities -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-category">Database Design</div>
+                <h2 class="slide-title">Entities, Attributes & Keys</h2>
+            </div>
+            <div class="slide-body">
+                <div class="code-box">
+1. USERS         : user_id (PK), name, email, password_hash, role, created_at
+2. EVENTS        : event_id (PK), title, category, event_date, event_time, location, price, total_seats
+3. BOOKINGS      : booking_id (PK), user_id (FK), event_id (FK), client_id, total_price, booking_date, status
+4. BOOKING_SEATS : (booking_id, seat_number) Composite PK, booking_id (FK)  [Normalized 3NF Table]
+5. RATINGS       : rating_id (PK), booking_id (FK), event_id (FK), rating (1-5), rated_at
+                </div>
+                <div class="card" style="padding: 15px;">
+                    <p style="color: #fff; font-size: 0.9rem;"><strong>Key Design Rationale:</strong> Rather than storing booked seats as a comma-separated list, `BOOKING_SEATS` is normalized into an associative entity with a composite primary key, fully satisfying 3NF.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: ER Diagram -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-category">Database Model</div>
+                <h2 class="slide-title">Entity-Relationship (E-R) Model</h2>
+            </div>
+            <div class="slide-body">
+                <div class="code-box" style="font-size: 0.85rem; line-height: 1.5; color: #38bdf8;">
+┌───────────────┐                  ┌───────────────┐
+│     USERS     │ ─── (1 : N) ───> │   BOOKINGS    │ <─── (1 : N) ─── ┌───────────────┐
+│ [user_id: PK] │                  │[booking_id:PK]│                  │    EVENTS     │
+└───────────────┘                  └───────┬───────┘                  │[event_id: PK] │
+                                           │                          └───────┬───────┘
+                                  (1 : N)  │                  (1 : N)         │
+                                           ▼                                  ▼
+                                  ┌─────────────────┐                ┌─────────────────┐
+                                  │  BOOKING_SEATS  │                │     RATINGS     │
+                                  │[booking_id,seat]│                │ [rating_id: PK] │
+                                  └─────────────────┘                └─────────────────┘
+                </div>
+                <p style="color: var(--muted); font-size: 0.9rem; margin-top: 5px;">• USERS (1) places BOOKINGS (N) • EVENTS (1) has BOOKINGS (N) • BOOKINGS (1) reserves SEATS (N) • BOOKINGS (1) rates (1:1) RATINGS</p>
+            </div>
+        </div>
+
+        <!-- Slide 8: Normalization & Constraints -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-category">Database Integrity</div>
+                <h2 class="slide-title">Normalization & Constraint Enforcement</h2>
+            </div>
+            <div class="slide-body">
+                <div class="grid-2">
+                    <div class="card" style="border-color: var(--accent);">
+                        <h3 style="color:var(--accent)"><i class="fas fa-check-double"></i> Normalization (1NF → 3NF)</h3>
+                        <ul>
+                            <li><strong>1NF:</strong> Atomic attributes; eradicated repeating seat arrays.</li>
+                            <li><strong>2NF:</strong> No partial dependencies on composite keys.</li>
+                            <li><strong>3NF:</strong> No transitive dependencies; clean entity isolation.</li>
+                        </ul>
+                    </div>
+                    <div class="card" style="border-color: var(--primary);">
+                        <h3 style="color:var(--primary)"><i class="fas fa-lock"></i> Integrity Constraints</h3>
+                        <ul>
+                            <li><strong>Primary Keys:</strong> Unique IDs on all core tables.</li>
+                            <li><strong>Foreign Keys:</strong> Enforces referential integrity.</li>
+                            <li><strong>Check Constraints:</strong> `role IN ('admin','user')`, `rating BETWEEN 1 AND 5`.</li>
+                            <li><strong>Triggers & Sequences:</strong> Automated auto-increment.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Review 2 Roadmap -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-category">Future Scope</div>
+                <h2 class="slide-title">Review 2 Implementation Roadmap</h2>
+            </div>
+            <div class="slide-body">
+                <div class="grid-2">
+                    <div class="card">
+                        <h3><i class="fas fa-code" style="color:var(--secondary)"></i> Advanced SQL Aggregations</h3>
+                        <p>Implementing `LISTAGG`, `AVG`, `GROUP BY`, and multi-table joins for live seat availability.</p>
+                    </div>
+                    <div class="card">
+                        <h3><i class="fas fa-handshake" style="color:var(--accent)"></i> Atomic Checkout Transactions</h3>
+                        <p>Multi-statement execution with explicit COMMIT / ROLLBACK semantics.</p>
+                    </div>
+                    <div class="card">
+                        <h3><i class="fas fa-bolt" style="color:var(--primary)"></i> Indexing & Query Tuning</h3>
+                        <p>B-Tree indexing on lookup keys and foreign keys for high query throughput.</p>
+                    </div>
+                    <div class="card">
+                        <h3><i class="fas fa-laptop-code" style="color:var(--text)"></i> Live Demonstration</h3>
+                        <p>Complete execution of booking, cancellation, and admin management workflows.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Conclusion -->
+        <div class="slide">
+            <div class="slide-header" style="text-align: center; margin-top: 60px;">
+                <h1 style="font-size: 4rem; font-weight: 800; color: var(--primary);">THANK YOU!</h1>
+                <h2 style="font-size: 1.8rem; color: #fff; margin: 15px 0;">TixHub — Scalable Event & Ticket Booking System</h2>
+                <p style="font-size: 1.2rem; color: var(--accent); font-weight: 600;">Questions & Feedback are Welcome</p>
+            </div>
+            <div style="text-align: center; color: var(--muted); margin-top: 30px;">Review 1 (Design Review) Completed Successfully</div>
+        </div>
+
+    </div>
+
+    <!-- Speaker Notes Bar -->
+    <div class="speaker-notes-drawer">
+        <strong>🗣️ Speaker Script:</strong>
+        <span id="speakerNoteText">Welcome faculty and peers to Review 1 for TixHub.</span>
+    </div>
+
+    <!-- Footer Controls -->
+    <div class="controls">
+        <button class="btn" onclick="prevSlide()"><i class="fas fa-arrow-left"></i> Previous</button>
+        <div class="progress-bar-container">
+            <div id="progressBar" class="progress-bar"></div>
+        </div>
+        <span id="slideCounter" style="font-weight: 600; color: #fff; font-size: 0.9rem; margin-right: 15px;">Slide 1 / 10</span>
+        <button class="btn" onclick="nextSlide()">Next <i class="fas fa-arrow-right"></i></button>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const progressBar = document.getElementById('progressBar');
+        const slideCounter = document.getElementById('slideCounter');
+        const speakerNoteText = document.getElementById('speakerNoteText');
+        let currentSlide = 0;
+
+        const speakerNotes = [
+            "Good morning respected professors. Today I am presenting Review 1 for TixHub, an Online Event and Ticket Booking System.",
+            "Traditional ticketing channels suffer from long queues, lack of visual seat maps, race conditions, and poor cancellation handling.",
+            "TixHub delivers a 3NF relational database solution with visual cinema seat maps, ACID transaction guarantees, and role-based security.",
+            "Our requirement analysis separates functional features—like authentication and seat maps—from non-functional guarantees like 3NF and encryption.",
+            "TixHub follows a 3-tier architecture: Vanilla JS frontend, Express.js backend with JWT, and Oracle 11g XE database with connection pooling.",
+            "Our database schema decomposes booked seats into BOOKING_SEATS with a composite primary key to eliminate multi-valued dependencies.",
+            "This slide demonstrates our E-R diagram topology: 1-to-N relationships between Users/Events and Bookings, and Bookings to Seats/Ratings.",
+            "Our schema strictly adheres to 3NF normalization, with primary keys, foreign keys, and domain check constraints guaranteeing data validity.",
+            "In Review 2, we will present atomic checkout transactions, analytical queries with LISTAGG and AVG, index tuning, and full live execution.",
+            "Thank you for your time and attention. I am now open to any questions or suggestions from the faculty."
+        ];
+
+        function showSlide(index) {
+            slides.forEach((s, i) => s.classList.toggle('active', i === index));
+            progressBar.style.width = `${((index + 1) / slides.length) * 100}%`;
+            slideCounter.textContent = `Slide ${index + 1} / ${slides.length}`;
+            speakerNoteText.textContent = speakerNotes[index];
+        }
+
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                showSlide(currentSlide);
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                showSlide(currentSlide);
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+
+        showSlide(0);
+    </script>
+</body>
+</html>

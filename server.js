@@ -8,14 +8,21 @@ const bookingsRoute = require('./routes/bookings');
 const ratingsRoute = require('./routes/ratings');
 const authRoute = require('./routes/auth');
 
+const path = require('path');
+
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, 'frontend')));
 
 app.use('/api/events', eventsRoute);
 app.use('/api/bookings', bookingsRoute);
 app.use('/api/ratings', ratingsRoute);
 app.use('/api/auth', authRoute);
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend', 'web_html.html'));
+});
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 

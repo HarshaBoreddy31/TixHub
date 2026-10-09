@@ -10,16 +10,18 @@
 </head>
 <body>
     <div id="authOverlay" class="auth-overlay" style="display: none;">
-        <div class="auth-card">
-            <h2>Welcome to TixHub</h2>
-            <p>Select your role to continue</p>
-            <div class="auth-actions">
+        <div class="auth-card" style="position: relative;">
+            <span class="close-overlay" onclick="hideOverlay()" style="position: absolute; right: 18px; top: 14px; font-size: 26px; cursor: pointer; color: #888; font-weight: bold; line-height: 1;">&times;</span>
+            <h2 id="authHeaderTitle">Welcome to TixHub</h2>
+            <p id="authHeaderSubtitle">Select your role to continue</p>
+            <div id="authRoleActions" class="auth-actions">
                 <button class="wide-btn" type="button" onclick="showUserLogin()">User Login / Register</button>
+                <button class="wide-btn creator-btn" type="button" onclick="showCreatorLogin()"><i class="fas fa-calendar-plus" style="margin-right:6px;"></i> Creator Portal</button>
                 <button class="wide-btn admin-btn" type="button" onclick="showAdminLogin()">Admin Login</button>
             </div>
 
             <div id="userLoginBox" class="user-login-box hidden">
-                <h3>User</h3>
+                <h3 id="userBoxTitle">User Login / Register</h3>
                 <div id="userForms">
                     <div id="loginForm">
                         <input id="userLoginEmail" type="email" placeholder="Email" autocomplete="off">
@@ -35,7 +37,28 @@
                         <button class="wide-btn cancel-btn" type="button" onclick="showLoginForm()">Back to Login</button>
                     </div>
                 </div>
-                <button class="wide-btn cancel-btn" type="button" onclick="hideUserLogin()">Close</button>
+                <button id="userBackBtn" class="wide-btn cancel-btn" type="button" onclick="handleUserBack()" style="margin-top:12px;">Back to Roles</button>
+            </div>
+
+            <div id="creatorLoginBox" class="creator-login-box hidden">
+                <h3><i class="fas fa-bullhorn" style="color:#667eea; margin-right:6px;"></i> Creator Portal</h3>
+                <p style="font-size:0.9rem; color:#666; margin-bottom:16px;">Create your creator account to host events visible for everyone to book, or log back in.</p>
+                <div id="creatorForms">
+                    <div id="creatorLoginForm">
+                        <input id="creatorLoginEmail" type="email" placeholder="Creator Email" autocomplete="off">
+                        <input id="creatorLoginPassword" type="password" placeholder="Password" autocomplete="off">
+                        <button class="wide-btn creator-btn" type="button" onclick="creatorLogin()">Login as Creator</button>
+                        <p style="margin-top:12px;">Don't have a creator account? <a href="javascript:void(0)" onclick="showCreatorRegisterForm()" style="color:#667eea; font-weight:600;">Create Creator Account</a></p>
+                    </div>
+                    <div id="creatorRegisterForm" class="hidden">
+                        <input id="creatorRegisterName" type="text" placeholder="Creator / Organization Name" autocomplete="off">
+                        <input id="creatorRegisterEmail" type="email" placeholder="Creator Email" autocomplete="off">
+                        <input id="creatorRegisterPassword" type="password" placeholder="Password (min 6 characters)" autocomplete="off">
+                        <button class="wide-btn creator-btn" type="button" onclick="registerCreator()">Create Creator Account</button>
+                        <button class="wide-btn cancel-btn" type="button" onclick="showCreatorLoginForm()" style="margin-top:8px;">Back to Creator Login</button>
+                    </div>
+                </div>
+                <button class="wide-btn cancel-btn" type="button" onclick="hideCreatorLogin()" style="margin-top:12px;">Back to Roles</button>
             </div>
 
             <div id="adminLoginBox" class="admin-login-box hidden">
@@ -43,7 +66,7 @@
                 <input id="adminUsername" type="email" placeholder="Admin email" autocomplete="off">
                 <input id="adminPassword" type="password" placeholder="Password" autocomplete="off">
                 <button class="wide-btn admin-login-btn" type="button" onclick="adminLogin()">Login</button>
-                <button class="wide-btn cancel-btn" type="button" onclick="hideAdminLogin()">Back</button>
+                <button class="wide-btn cancel-btn" type="button" onclick="hideAdminLogin()">Back to Roles</button>
             </div>
         </div>
     </div>
@@ -61,7 +84,8 @@
                     <li><a href="#events" class="nav-link">Live Events</a></li>
                     <li><a href="#college" class="nav-link">College Fest</a></li>
                     <li><a href="javascript:void(0);" class="nav-link" onclick="viewMyBookings()">My Bookings</a></li>
-                    <li id="adminDashboardNavItem" class="hidden"><a href="#adminDashboard" class="nav-link" style="color: #e50914; font-weight: 600;">Dashboard</a></li>
+                    <li id="creatorNavItem"><a href="javascript:void(0);" class="nav-link" onclick="handleCreatorNavClick()" style="color: #667eea; font-weight: 600;"><i class="fas fa-plus-circle"></i> Create Event</a></li>
+                    <li id="adminDashboardNavItem" class="hidden"><a href="#adminDashboard" id="dashboardNavLinkText" class="nav-link" style="color: #e50914; font-weight: 600;">Dashboard</a></li>
                     <li><a href="javascript:void(0);" id="userNavLink" class="nav-link" onclick="openAuthOverlay()">Login</a></li>
                     <li id="logoutNavItem" class="hidden" style="margin-left: 8px;">
                         <button type="button" id="userLogoutBtn" class="nav-logout" onclick="logoutUser()" style="background: #fff; color: #222; border: 1px solid #ddd; border-radius: 999px; padding: 10px 16px; cursor: pointer; font-weight: 600;">Logout</button>
@@ -91,6 +115,9 @@
                 </select>
                 <button onclick="filterEvents()"><i class="fas fa-search"></i></button>
             </div>
+            <div style="margin-top: 22px;">
+                <button type="button" class="hero-creator-btn" onclick="openCreatorRegisterModal()"><i class="fas fa-bullhorn" style="margin-right: 6px;"></i> Want to Host an Event? Create Creator Account</button>
+            </div>
         </div>
     </section>
 
@@ -98,16 +125,19 @@
         <div class="container">
             <div class="admin-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 25px;">
                 <div>
-                    <h2>Admin Dashboard</h2>
-                    <p>Manage your event listings from here. Add new events or delete old ones.</p>
+                    <h2 id="dashboardTitle">Dashboard</h2>
+                    <p id="dashboardSubtitle">Manage your event listings from here. Add new events or delete your listings.</p>
+                    <div id="creatorNotice" class="hidden" style="margin-top: 10px; display: inline-flex; align-items: center; gap: 8px; background: rgba(102, 126, 234, 0.15); color: #4338ca; padding: 8px 16px; border-radius: 999px; font-size: 0.9rem; font-weight: 500;">
+                        <i class="fas fa-globe"></i> Events you create are visible to everyone on TixHub to book tickets. You can only delete your own events.
+                    </div>
                 </div>
-                <button class="wide-btn logout-btn" type="button" onclick="logoutAdmin()" style="width: auto; padding: 10px 22px; margin: 0; background: #dc3545; color: #fff; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
-                    <i class="fas fa-sign-out-alt" style="margin-right: 6px;"></i> Logout Admin
+                <button id="dashboardLogoutTopBtn" class="wide-btn logout-btn" type="button" onclick="handleDashboardLogout()" style="width: auto; padding: 10px 22px; margin: 0; background: #dc3545; color: #fff; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                    <i class="fas fa-sign-out-alt" style="margin-right: 6px;"></i> Logout
                 </button>
             </div>
             <div class="admin-grid">
                 <div class="admin-card">
-                    <h3>Add New Event</h3>
+                    <h3 id="addEventCardTitle">Add New Event</h3>
                     <div class="admin-form">
                         <input id="newEventTitle" type="text" placeholder="Event title">
                         <select id="newEventCategory">
@@ -115,26 +145,32 @@
                             <option value="live">Live Event</option>
                             <option value="college">College Fest</option>
                         </select>
-                        <input id="newEventDate" type="text" placeholder="Date">
-                        <input id="newEventTime" type="text" placeholder="Time">
+                        <input id="newEventDate" type="text" placeholder="Date (e.g. Oct 28, 2026)">
+                        <input id="newEventTime" type="text" placeholder="Time (e.g. 6:30 PM)">
                         <input id="newEventLocation" type="text" placeholder="Location">
-                        <input id="newEventPrice" type="number" placeholder="Price">
+                        <input id="newEventPrice" type="number" placeholder="Price (₹)">
                         <input id="newEventSeats" type="number" placeholder="Total seats">
-                        <button class="wide-btn admin-add-btn" type="button" onclick="addAdminEvent()">Add Event</button>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px;">
+                            <button id="dashboardAddEventBtn" class="wide-btn admin-add-btn" type="button" onclick="handleDashboardAddEvent()" style="flex: 1;">Add Event</button>
+                            <button id="cancelEditEventBtn" class="wide-btn cancel-btn hidden" type="button" onclick="cancelEditEvent()" style="flex: 1; max-width: 140px;">Cancel</button>
+                        </div>
                     </div>
                 </div>
                 <div class="admin-card">
-                    <h3>Current Events</h3>
+                    <h3 id="currentEventsCardTitle">Current Events</h3>
                     <div id="adminEventList" class="admin-event-list"></div>
                 </div>
             </div>
-            <button class="wide-btn logout-btn" type="button" onclick="logoutAdmin()">Logout Admin</button>
+            <button id="dashboardLogoutBottomBtn" class="wide-btn logout-btn" type="button" onclick="handleDashboardLogout()">Logout</button>
         </div>
     </section>
     <!-- Events Section -->
     <section id="events" class="events">
         <div class="container">
             <h2 class="section-title">Discover Events</h2>
+            <div id="creatorBrowsingBanner" class="hidden" style="margin: 0 auto 24px auto; max-width: 800px; text-align: center; padding: 12px 20px; background: #eef2ff; color: #4338ca; border: 1px solid #c7d2fe; border-radius: 10px; font-size: 0.95rem; font-weight: 500;">
+                <i class="fas fa-info-circle" style="margin-right: 6px;"></i> <strong>Creator Mode:</strong> You are viewing events in view-only mode. Creator accounts cannot book tickets.
+            </div>
             <div class="events-grid" id="eventsGrid">
                 <!-- Events will be populated by JavaScript -->
             </div>

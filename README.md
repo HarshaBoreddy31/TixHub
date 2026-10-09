@@ -1,4 +1,4 @@
-﻿# 🎟️ TixHub – Full-Stack Online Event & Ticket Booking System
+# 🎟️ TixHub – Full-Stack Online Event & Ticket Booking System
 
 A full-stack web application for discovering and booking tickets for movies, live concerts, and college fests with interactive real-time seat reservation, JWT role-based authentication, and an Oracle 11g database backend.
 
@@ -9,8 +9,9 @@ A full-stack web application for discovering and booking tickets for movies, liv
 - **🎫 Interactive Seat Selection**: Visual cinema-style seat map with real-time availability and dynamic pricing calculation.
 - **🔐 Secure Role-Based Authentication**:
   - User registration & login with password hashing via **bcryptjs**.
+  - **Creator Portal**: Self-service registration & login for event organizers to list events visible to all users for booking and manage/delete only their own events.
   - Secure **JWT** session token management.
-  - Dedicated **Admin Dashboard** for creating and managing event listings.
+  - Dedicated **Admin Dashboard & Creator Dashboard** for managing event listings.
 - **⚡ Transaction-Safe Booking Engine**: Concurrency control preventing duplicate seat reservations via atomic Oracle SQL transactions.
 - **⭐ Event Rating & Review Aggregations**: Dynamic event ratings computed via SQL `LISTAGG` and `AVG` analytical functions.
 - **📱 Responsive UI**: Modern responsive design with smooth animations and category filtering.
@@ -111,12 +112,16 @@ Open `web_html.html` directly in your browser or run via Live Server.
 | Method | Endpoint | Description | Access |
 | :--- | :--- | :--- | :--- |
 | `POST` | `/api/auth/register` | Register a new user | Public |
-| `POST` | `/api/auth/login` | User login & JWT issuance | Public |
+| `POST` | `/api/auth/login` | User/Creator login & JWT issuance | Public |
+| `POST` | `/api/auth/register-creator` | Register a new creator account | Public |
+| `POST` | `/api/auth/creator-login` | Creator login & JWT issuance | Public |
 | `POST` | `/api/auth/admin-login` | Admin login & JWT issuance | Public |
-| `GET` | `/api/events` | Fetch all events & availability | Public |
-| `POST` | `/api/events` | Create new event listing | Admin Only |
-| `DELETE` | `/api/events/:id` | Delete event listing | Admin Only |
-| `POST` | `/api/bookings` | Book selected seats | User Only |
-| `GET` | `/api/bookings` | View user booking history | User Only |
-| `DELETE` | `/api/bookings/:id` | Cancel an active booking | User Only |
-| `POST` | `/api/ratings` | Rate an attended event | User Only |
+| `GET` | `/api/events` | Fetch all events (with creator info) | Public |
+| `GET` | `/api/events/mine` | Fetch logged-in creator's events | Creator / Admin |
+| `POST` | `/api/events` | Create new event listing | Creator / Admin |
+| `PUT` | `/api/events/:id` | Modify event listing (creators only modify own) | Creator / Admin |
+| `DELETE` | `/api/events/:id` | Delete event listing (creators only delete own) | Creator / Admin |
+| `POST` | `/api/bookings` | Book selected seats | Authenticated Users |
+| `GET` | `/api/bookings` | View user booking history | Authenticated Users |
+| `DELETE` | `/api/bookings/:id` | Cancel an active booking | Authenticated Users |
+| `POST` | `/api/ratings` | Rate an attended event | Authenticated Users |

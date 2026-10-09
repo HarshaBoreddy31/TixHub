@@ -110,12 +110,19 @@ function getBearerToken(req) {
 function requireRole(req, res, next, role) {
   const token = getBearerToken(req);
   if (!token || !isValid(token)) {
-    return res.status(401).json({ error: role === 'admin' ? 'Admin authentication required' : 'Authentication required' });
+    return res.status(401).json({ error: 'Authentication required' });
   }
 
   const user = verifyToken(token);
-  if (!user || (role && (!user.role || user.role.toLowerCase() !== role.toLowerCase()))) {
-    return res.status(403).json({ error: `Requires ${role} role` });
+  if (!user || !user.role) {
+    return res.status(403).json({ error: 'Forbidden' });
+  }
+
+  const userRole = user.role.toLowerCase();
+  const allowedRoles = Array.isArray(role) ? role.map((r) => r.toLowerCase()) : [role.toLowerCase()];
+
+  if (!allowedRoles.includes(userRole)) {
+    return res.status(403).json({ error: `Requires ${Array.isArray(role) ? role.join(' or ') : role} role` });
   }
 
   req.user = user;
@@ -130,4 +137,23 @@ function requireUser(req, res, next) {
   return requireRole(req, res, next, 'user');
 }
 
-module.exports = { issueToken, isValid, revoke, verifyToken, requireAdmin, requireUser, getBearerToken };
+function requireCreator(req, res, next) {
+  return requireRole(req, res, next, 'creator');
+}
+
+function requireCreatorOrAdmin(req, res, next) {
+  return requireRole(req, res, next, ['creator', 'admin']);
+}
+
+module.exports = {
+  issueToken,
+  isValid,
+  revoke,
+  verifyToken,
+  requireRole,
+  requireAdmin,
+  requireUser,
+  requireCreator,
+  requireCreatorOrAdmin,
+  getBearerToken
+};

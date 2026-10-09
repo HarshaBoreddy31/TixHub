@@ -82,11 +82,11 @@ CREATE TABLE users (
     name          VARCHAR2(100) NOT NULL,
     email         VARCHAR2(150) NOT NULL UNIQUE,
     password_hash VARCHAR2(255) NOT NULL,
-    role          VARCHAR2(10) DEFAULT 'admin' NOT NULL,
+    role          VARCHAR2(20) DEFAULT 'user' NOT NULL,
     created_at    DATE DEFAULT SYSDATE,
 
     CONSTRAINT chk_users_role
-        CHECK (role IN ('admin','user'))
+        CHECK (role IN ('admin','user','creator'))
 );
 
 -- ============================================================
@@ -103,6 +103,7 @@ CREATE TABLE events (
     price        NUMBER(10,2) NOT NULL,
     total_seats  NUMBER NOT NULL,
     icon         VARCHAR2(10) DEFAULT '🎫',
+    created_by   NUMBER REFERENCES users(user_id) ON DELETE CASCADE,
     created_at   DATE DEFAULT SYSDATE,
 
     CONSTRAINT chk_events_category
@@ -268,5 +269,8 @@ ON booking_seats(booking_id);
 
 CREATE INDEX idx_ratings_event
 ON ratings(event_id);
+
+CREATE INDEX idx_events_created_by
+ON events(created_by);
 
 COMMIT;

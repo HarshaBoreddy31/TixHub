@@ -9,7 +9,7 @@ function getAuthenticatedUser(req) {
   const token = getBearerToken(req);
   if (!token) return null;
   const user = verifyToken(token);
-  if (!user || (!user.role || user.role.toLowerCase() !== 'user')) return null;
+  if (!user || !user.role || !['user', 'creator', 'admin'].includes(user.role.toLowerCase())) return null;
   return user;
 }
 
@@ -26,12 +26,29 @@ router.post('/', async (req, res) => {
     return res.status(401).json({ error: 'Please log in to book tickets' });
   }
 
+  if (authUser && authUser.role && authUser.role.toLowerCase() !== 'user') {
+    return res.status(403).json({ error: 'Only user accounts can book tickets. Creators and admins cannot book events.' });
+  }
+
   if (!eventId || !Array.isArray(seats) || seats.length === 0) {
     return res.status(400).json({ error: 'eventId and seats[] are required' });
   }
 
   try {
     const outcome = await withConnection(async (conn) => {
+      // Validate that the booking account is a regular user in the database
+      const userCheck = await conn.execute(
+        `SELECT role FROM users WHERE user_id = :userId`,
+        { userId: effectiveUserId }
+      );
+      if (!userCheck.rows || userCheck.rows.length === 0) {
+        return { status: 401, body: { error: 'User account not found' } };
+      }
+      const accountRole = (userCheck.rows[0].ROLE || '').toLowerCase();
+      if (accountRole !== 'user') {
+        return { status: 403, body: { error: 'Only user accounts can book tickets. Creators and admins cannot book events.' } };
+      }
+
       const eventResult = await conn.execute(
         `SELECT price, total_seats FROM events WHERE event_id = :id`,
         { id: eventId }
